@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundConvert</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>SoundConvert</h1>
+
+        <p>Converta áudios para MP3 ou WAV</p>
+
+        <input type="file" id="audioFile" multiple accept="audio/*">
+
+        <label for="format">
+            Converter para:
+        </label>
+
+        <select id="format">
+            <option value="mp3">MP3 (Saída)</option>
+            <option value="wav">WAV (Saída)</option>
+        </select>
+
+        <button id="convertBtn">
+            Converter
+        </button>
+
+        <div id="preview"></div>
+
+        <div id="downloads"></div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
