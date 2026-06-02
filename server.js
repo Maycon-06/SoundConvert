@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const ffmpeg = require("fluent-ffmpeg");
 const path = require("path");
 
 const app = express();
@@ -11,25 +12,52 @@ const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
-  }
+  },
 });
 
 const upload = multer({ storage });
 
 app.post("/convert", upload.array("audios"), (req, res) => {
+  const format = req.body.format;
 
-  console.log("Arquivos recebidos:");
+  const convertedFiles = [];
 
-  req.files.forEach(file => {
-    console.log(file.originalname);
+  let completed = 0;
+
+  req.files.forEach((file) => {
+    const outputName = path.parse(file.filename).name + "." + format;
+
+    const outputPath = "outputs/" + outputName;
+
+    ffmpeg(file.path)
+      .audioFrequency(48000)
+
+      .toFormat(format)
+
+      .save(outputPath)
+
+      .on("end", () => {
+        convertedFiles.push("/" + outputPath);
+
+        completed++;
+
+        if (completed === req.files.length) {
+          res.json({
+            files: convertedFiles,
+          });
+        }
+      })
+
+      .on("error", (err) => {
+        console.error(err);
+      });
   });
-
-  res.json({
-    message: "Upload realizado com sucesso"
-  });
-
 });
 
-app.listen(3000, () => {
-  console.log("Servidor iniciado em http://localhost:3000");
+const PORT = 7000;
+
+app.listen(PORT, () => {
+
+  console.log(`Servidor iniciado em http://localhost:${PORT}`);
+
 });

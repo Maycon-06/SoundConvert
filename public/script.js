@@ -2,11 +2,9 @@ const input = document.getElementById("audioFile");
 const preview = document.getElementById("preview");
 
 input.addEventListener("change", () => {
-
   preview.innerHTML = "";
 
   for (let file of input.files) {
-
     const card = document.createElement("div");
 
     card.classList.add("card");
@@ -26,38 +24,63 @@ input.addEventListener("change", () => {
 
     preview.appendChild(card);
   }
-
 });
 
-document
-  .getElementById("convertBtn")
-  .addEventListener("click", async () => {
+document.getElementById("convertBtn").addEventListener("click", async () => {
+  const files = input.files;
 
-    const files = input.files;
+  if (files.length === 0) {
+    alert("Selecione pelo menos um áudio");
+    return;
+  }
 
-    if (files.length === 0) {
-      alert("Selecione pelo menos um áudio");
-      return;
-    }
+  const formData = new FormData();
 
-    const formData = new FormData();
+  for (let file of files) {
+    formData.append("audios", file);
+  }
 
-    for (let file of files) {
-      formData.append("audios", file);
-    }
+  formData.append("format", document.getElementById("format").value);
 
-    formData.append(
-      "format",
-      document.getElementById("format").value
-    );
+  document.getElementById("status").textContent = "Convertendo...";
 
-    const response = await fetch("/convert", {
-      method: "POST",
-      body: formData
-    });
-
-    const data = await response.json();
-
-    alert(data.message);
-
+  const response = await fetch("/convert", {
+    method: "POST",
+    body: formData,
   });
+
+  const data = await response.json();
+
+  document.getElementById("status").textContent =
+  "Conversão concluída!";
+
+  const downloads = document.getElementById("downloads");
+
+  downloads.innerHTML = "";
+
+  data.files.forEach((file) => {
+    const card = document.createElement("div");
+
+    card.classList.add("card");
+
+    const audio = document.createElement("audio");
+
+    audio.controls = true;
+
+    audio.src = file;
+
+    const link = document.createElement("a");
+
+    link.href = file;
+
+    link.download = "";
+
+    link.innerText = "Baixar arquivo convertido";
+
+    card.appendChild(audio);
+
+    card.appendChild(link);
+
+    downloads.appendChild(card);
+  });
+});

@@ -17,7 +17,11 @@
 
         <p>Converta áudios para MP3 ou WAV</p>
 
-        <input type="file" id="audioFile" multiple accept="audio/*">
+        <input type="file" id="audioFile" multiple hidden>
+
+        <label for="audioFile" class="upload-btn">
+            Escolher Arquivos
+        </label>
 
         <label for="format">
             Converter para:
@@ -31,6 +35,8 @@
         <button id="convertBtn">
             Converter
         </button>
+
+        <p id="status"></p>
 
         <div id="preview"></div>
 
